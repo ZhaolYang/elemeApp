@@ -1,12 +1,18 @@
 <template>
-  <div id="app">
+  <div>
     <v-header></v-header>
     <ul class="tab">
-      <li class="tab-item">商品</li>
-      <li class="tab-item">评论</li>
-      <li class="tab-item">商家</li>
+      <li class="tab-item">
+        <router-link to="/goods">商品</router-link>
+      </li>
+      <li class="tab-item">
+        <router-link to="/ratings">评价</router-link>
+      </li>
+      <li class="tab-item">
+        <router-link to="/seller">商家</router-link>
+      </li>
     </ul>
-    <div class="content">content</div>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -22,7 +28,6 @@ export default {
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-  #app
     .tab
       width: 100%
       display: flex
@@ -31,4 +36,10 @@ export default {
       .tab-item
         flex: 1
         text-align: center
+        & > a
+          display: block
+          font-size: 14px
+          color: rgb(77,85,93)
+          &.active
+            color: rgb(240,20,20)
 </style>

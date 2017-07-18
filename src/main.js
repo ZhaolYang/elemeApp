@@ -3,6 +3,9 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import App from './App'
+import goods from './components/goods/goods'
+import ratings from './components/ratings/ratings'
+import seller from './components/seller/seller'
 // import router from './router'
 
 Vue.use(VueRouter)
@@ -10,9 +13,27 @@ Vue.use(VueRouter)
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
-new Vue({
-  el: '#app',
-  // router,
-  // template: '<App/>',
-  components: { App }
+
+const routes = [
+	// {path: '/', component: goods},
+	{path: '/goods', component: goods},
+	{path: '/ratings', component: ratings},
+	{path: '/seller', component: seller}
+]
+
+const router = new VueRouter({
+	routes,
+	linkActiveClass: 'active'
 })
+
+const app = new Vue({
+	router,
+	components: {
+		App,
+		goods,
+		seller,
+		ratings
+	}
+}).$mount('#app')
+
+router.replace('/goods')
