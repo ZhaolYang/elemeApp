@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-header></v-header>
-    <ul class="tab">
+    <ul class="tab border-1px">
       <li class="tab-item">
         <router-link to="/goods">商品</router-link>
       </li>
@@ -21,6 +21,11 @@ import header from './components/header/header'
 
 export default {
   name: 'app',
+  data() {
+    return {
+      seller: {}
+    }
+  },
   components: {
     'v-header': header
   }
@@ -28,11 +33,14 @@ export default {
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
+    @import "./common/stylus/mixin.styl"
+
     .tab
       width: 100%
       display: flex
       height: 40px
       line-height: 40px
+      border-1px(rgba(7,17,27,0.1))
       .tab-item
         flex: 1
         text-align: center
