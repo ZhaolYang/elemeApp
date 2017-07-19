@@ -19,6 +19,8 @@
 <script>
 import header from './components/header/header'
 
+const ERR_OK = 0;
+
 export default {
   name: 'app',
   data() {
@@ -28,6 +30,15 @@ export default {
   },
   components: {
     'v-header': header
+  },
+  created(){
+    this.$http.get('/api/seller').then((response) => {
+      response = response.body;
+      if(response.errno === ERR_OK){
+        this.seller = response.data
+        console.log(this.seller)
+      }
+    });
   }
 }
 </script>
