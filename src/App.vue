@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-header></v-header>
+    <v-header :seller="seller"></v-header>
     <ul class="tab border-1px">
       <li class="tab-item">
         <router-link to="/goods">商品</router-link>
