@@ -3,6 +3,13 @@ body, html
   font-weight: 200
   font-family: 'PingFang SC', 'STHeitiSC-Light','Helvetica-Light', arial, sans-serif
 
+
+.clearfix
+  &:after
+    content: ''
+    display: block
+    clear: both
+
 @media (-webkit-min-device-pixel-ratio: 1.5),(min-device-pixel-ratio:1.5)
   .border-1px
   	&::after
