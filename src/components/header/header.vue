@@ -30,25 +30,43 @@
         <div class="background">
         	<img :src="seller.avatar" width="100%" height="100%">
         </div>
-        <div v-show="detailShow" class="detail">
-        	<div class="detail-wrapper clearfix">
-        		<div class="detail-main">
-        			<h1 class="name">{{seller.name}}</h1>
-        			<div class="star-wrapper">
-        				<star :size="48" :score="seller.score"></star>
-        			</div>
-        			<!-- 优惠信息 -->
-        			<div class="title">
-        				<div class="line"></div>
-        				<p class="text">优惠信息</p>
-        				<div class="line"></div>
-        			</div>
-        		</div>
-        	</div>
-        	<div class="detail-close">
-        		<i class="icon-close"></i>
-        	</div>
-        </div>
+				<transition name="fade">
+					<div v-show="detailShow" class="detail">
+						<div class="detail-wrapper clearfix">
+							<div class="detail-main">
+								<h1 class="name">{{seller.name}}</h1>
+								<div class="star-wrapper">
+									<star :size="48" :score="seller.score"></star>
+								</div>
+								<!-- 优惠信息 -->
+								<div class="title">
+									<div class="line"></div>
+									<p class="text">优惠信息</p>
+									<div class="line"></div>
+								</div>
+								<ul v-if="seller.supports" class="supports">
+									<li class="support-item" v-for="(item, index) in seller.supports">
+											<span class="icon" :class="classMap[item.type]"></span>
+											<span class="text">{{item.description}}</span>
+									</li>
+								</ul>
+								<div class="title">
+									<div class="line"></div>
+									<p class="text">商家公告</p>
+									<div class="line"></div>
+								</div>
+								<!-- 公告 -->
+								<div class="bulletin">
+									<p class="content">{{seller.bulletin}}</p>
+								</div>
+							</div>
+						</div>
+						<div class="detail-close">
+							<i class="icon-close" @click="hideDetail"></i>
+						</div>
+					</div>
+				</transition>
+        
     </div>
 </template>
 
@@ -73,7 +91,10 @@ export default {
     methods: {
     	showDetail(){
     		this.detailShow = true
-    	}
+    	},
+			hideDetail(){
+				this.detailShow = false
+			}
     },
     components: {
     	star
@@ -206,38 +227,79 @@ export default {
 	  	height: 100%
 	  	overflow: auto
 	  	background: rgba(7,17,27,.8)
-	  	.detail-wrapper
-	  	  min-height: 100vh
-	  	  width: 100vw
-	  	  .detail-main
-	  	  	padding-top: 64px
-	  	  	padding-bottom: 64px
-	  	  	.name
-	  	  	  line-height: 16px
-	  	  	  text-align: center
-	  	  	  font-size: 16px
-	  	  	  font-weight: 700
-	  	  	.star-wrapper
-	  	  	  margin-top: 18px
-	  	  	  padding: 2px 0
-	  	  	  text-align: center
-	  	  	.title
-	  	  	  display: flex
-	  	  	  width: 80vw
-	  	  	  margin: 30px auto 24px
-	  	  	  .line
-	  	      	flex: 1
-	  	      	position: relative
-	  	      	top: -6px
-	  	      	border-bottom: 1px solid rgba(255,255,255,.2)
-	  	      .text
-	  	      	padding: 0 12px
-	  	      	font-size: 14px
-	  	 .detail-close
-	  	 	position: relative
-	  	 	width: 32px
-	  	 	height: 32px
-	  	 	margin: -64px auto 0
-	  	 	clear: both
-	  	 	font-size: 32px
+			.detail-wrapper
+				min-height: 100vh
+				width: 100vw
+				.detail-main
+					padding-top: 64px
+					padding-bottom: 64px
+					.name
+						line-height: 16px
+						text-align: center
+						font-size: 16px
+						font-weight: 700
+					.star-wrapper
+						margin-top: 18px
+						padding: 2px 0
+						text-align: center
+					.title
+						display: flex
+						width: 80vw
+						margin: 30px auto 24px
+						.line
+							flex: 1
+							position: relative
+							top: -6px
+							border-bottom: 1px solid rgba(255,255,255,.2)
+						.text
+							padding: 0 12px
+							font-size: 14px
+					.supports
+						width: 80vw
+						margin: 0 auto
+						.support-item
+							padding: 0 12px
+							margin-bottom: 12px
+							font-size: 0
+							&:last-child
+								margin-bottom: 0
+							.icon
+								display: inline-block
+								width: 16px
+								height: 16px
+								vertical-align: top
+								margin-right: 6px
+								background-size: 16px 16px
+								background-repeat: no-repeat
+								&.decrease
+									bg-image('decrease_2')
+								&.discount
+									bg-image('discount_2')
+								&.guarantee
+									bg-image('guarantee_2')
+								&.invoice
+									bg-image('invoice_2')
+								&.special
+									bg-image('special_2')
+							.text
+								line-height: 16px
+								font-size: 12px
+					.bulletin
+						width: 80vw
+						margin: 0 auto
+						.content
+							padding: 0 12px
+							line-height 24px
+							font-size: 12px
+			.detail-close
+				position: relative
+				width: 32px
+				height: 32px
+				margin: -64px auto 0
+				clear: both
+				font-size: 32px
+		.fade-enter-active, .fade-leave-active
+			transition: all .3s
+		.fade-enter, .fade-leave-to
+			opacity: 0
 </style>
