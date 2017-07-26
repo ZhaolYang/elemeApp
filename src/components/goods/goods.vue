@@ -1,6 +1,6 @@
 <template>
 	<div id="goods">
-		<div class="menu-wrapper">
+		<div class="menu-wrapper" ref="menu-wrapper">
 			<ul>
 				<li v-for="(item, i) in goods" class="menu-item">
 					<span class="text border-1px">
@@ -9,7 +9,7 @@
 				</li>
 			</ul>
 		</div>
-		<div class="foods-wrapper">
+		<div class="foods-wrapper" ref="foods-wrapper">
 			<ul>
 				<li v-for="item in goods" class="food-list">
 					<h1 class="title">{{item.name}}</h1>
@@ -26,8 +26,7 @@
 									<span>好评率{{food.rating}}%</span>
 								</div>
 								<div class="price">
-									<span class="now">${{food.price}}</span>
-									<span class="old" v-show="food.oldPrice">${{food.oldPrice}}</span>
+									<span class="now">${{food.price}}</span><span class="old" v-show="food.oldPrice">${{food.oldPrice}}</span>
 								</div>
 							</div>
 						</li>
@@ -39,6 +38,8 @@
 </template>
 
 <script>
+	import BScroll from 'better-scroll'
+
 	const ERR_OK = 0
 
 	export default {
@@ -58,10 +59,18 @@
 				response = response.body
 				if(response.errno === ERR_OK) {
 					this.goods = response.data
-					console.log(this.goods)
+					this.$nextTick(()=>{
+						this._initScroll()
+					})
 				}
 			})
 			this.classMap = ['decrease','discount','special','invoice','guarantee']
+		},
+		methods: {
+			_initScroll(){
+				this.menuScroll = new BScroll(this.$refs['menu-wrapper'], {})
+				this.foodsScroll = new BScroll(this.$refs['foods-wrapper'], {})
+			}
 		}
 	};
 </script>
@@ -146,8 +155,9 @@
 						color: rgb(147,153,159)
 					.desc
 						margin-bottom: 8px
+						line-height: 12px
 					.extra
-						&.count
+						.count
 							margin-right: 12px
 					.price
 						font-weight: 700
