@@ -26,7 +26,11 @@
 									<span>好评率{{food.rating}}%</span>
 								</div>
 								<div class="price">
-									<span class="now">${{food.price}}</span><span class="old" v-show="food.oldPrice">${{food.oldPrice}}</span>
+									<span class="now">${{food.price}}</span>
+									<span class="old" v-show="food.oldPrice">${{food.oldPrice}}</span>
+								</div>
+								<div class="cartcontrol-wrapper">
+									<cartcontrol :food="food" @cartAdd="_drop"></cartcontrol>
 								</div>
 							</div>
 						</li>
@@ -34,91 +38,108 @@
 				</li>
 			</ul>
 		</div>
-		 <shopcart :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart> 
+		<shopcart ref="shopcart" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice" :selectFoods="selectFoods"></shopcart>
 	</div>
 </template>
 
 <script>
-	import BScroll from 'better-scroll'
-	import shopcart from '../shopcart/shopcart'
+import BScroll from 'better-scroll'
+import shopcart from '../shopcart/shopcart'
+import cartcontrol from '../cartcontrol/cartcontrol'
 
-	const ERR_OK = 0
+const ERR_OK = 0
 
-	export default {
-		name: 'goods',
-		data(){
-			return {
-				goods: [],
-				listHeight: [],
-				scrollY: 0
-			}
-		},
-		props: {
-			seller: {
-    		type: Object
-    	}
-		},
-		computed: {
-			currentIndex(){
-				for(let i=0;i<this.listHeight.length;i++){
-					let height1 = this.listHeight[i]
-					let height2 = this.listHeight[i+1]
-					if(!height2 || (this.scrollY >= height1 && this.scrollY < height2)){
-						return i
-					}
-				}
-				return 0
-			}
-		},
-		created() {
-			this.$http.get('/api/goods').then((response)=>{
-				response = response.body
-				if(response.errno === ERR_OK) {
-					this.goods = response.data
-					this.$nextTick(()=>{
-						this._initScroll()
-						this._caculateHeight()
-					})
-				}
-			})
-			this.classMap = ['decrease','discount','special','invoice','guarantee']
-		},
-		methods: {
-			_initScroll(){
-				this.menuScroll = new BScroll(this.$refs['menu-wrapper'], {
-					click: true
-				})
-				this.foodsScroll = new BScroll(this.$refs['foods-wrapper'], {
-					probeType: 3
-				})
-
-				this.foodsScroll.on('scroll', (pos)=>{
-					this.scrollY =  Math.abs(Math.round(pos.y))
-				})
-			},
-			_caculateHeight(){
-				let foodList = this.$refs['foods-wrapper'].getElementsByClassName('food-list-hook')
-				let height = 0
-				this.listHeight.push(height)
-				for(let i=0;i<foodList.length;i++){
-					let item = foodList[i]
-					height += item.clientHeight
-					this.listHeight.push(height)
-				}
-			},
-			selectMenu(index, event){
-				if(!event._constructed){
-					return
-				}
-				let foodList = this.$refs['foods-wrapper'].getElementsByClassName('food-list-hook')
-				let el = foodList[index]
-				this.foodsScroll.scrollToElement(el, 300)
-			}
-		},
-		components: {
-			shopcart
+export default {
+	name: 'goods',
+	data() {
+		return {
+			goods: [],
+			listHeight: [],
+			scrollY: 0
 		}
-	};
+	},
+	props: {
+		seller: {
+			type: Object
+		}
+	},
+	computed: {
+		currentIndex() {
+			for (let i = 0; i < this.listHeight.length; i++) {
+				let height1 = this.listHeight[i]
+				let height2 = this.listHeight[i + 1]
+				if (!height2 || (this.scrollY >= height1 && this.scrollY < height2)) {
+					return i
+				}
+			}
+			return 0
+		},
+		selectFoods() {
+			let foods = []
+			this.goods.forEach((good) => {
+				good.foods.forEach((food) => {
+					if (food.count > 0) {
+						foods.push(food)
+					}
+				})
+			})
+			return foods
+		}
+	},
+	created() {
+		this.$http.get('/api/goods').then((response) => {
+			response = response.body
+			if (response.errno === ERR_OK) {
+				this.goods = response.data
+				this.$nextTick(() => {
+					this._initScroll()
+					this._caculateHeight()
+				})
+			}
+		})
+		this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee']
+	},
+	methods: {
+		_initScroll() {
+			this.menuScroll = new BScroll(this.$refs['menu-wrapper'], {
+				click: true
+			})
+			this.foodsScroll = new BScroll(this.$refs['foods-wrapper'], {
+				click: true,
+				probeType: 3
+			})
+
+			this.foodsScroll.on('scroll', (pos) => {
+				this.scrollY = Math.abs(Math.round(pos.y))
+			})
+		},
+		_caculateHeight() {
+			let foodList = this.$refs['foods-wrapper'].getElementsByClassName('food-list-hook')
+			let height = 0
+			this.listHeight.push(height)
+			for (let i = 0; i < foodList.length; i++) {
+				let item = foodList[i]
+				height += item.clientHeight
+				this.listHeight.push(height)
+			}
+		},
+		selectMenu(index, event) {
+			if (!event._constructed) {
+				return
+			}
+			let foodList = this.$refs['foods-wrapper'].getElementsByClassName('food-list-hook')
+			let el = foodList[index]
+			this.foodsScroll.scrollToElement(el, 300)
+		},
+		_drop(target) {
+			this.$refs.shopcart.drop(target)
+		}
+	},
+	components: {
+		shopcart,
+		cartcontrol
+	}
+};
 </script>
 
 <style lang="stylus">
@@ -224,4 +245,8 @@
 							text-decoration: line-through
 							font-size: 10px
 							color: rgb(147,153,159)
+					.cartcontrol-wrapper
+						position: absolute
+						right: 0
+						bottom: 12px
 </style>

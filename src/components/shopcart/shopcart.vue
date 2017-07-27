@@ -17,67 +17,135 @@
         </div>
       </div>
     </div>
+    <div class="ball-container">
+      <transition v-for="ball in balls" name="drop" :key="ball.id" v-on:before-enter="beforeEnter" v-on:enter="enter" v-on:after-enter="afterEnter">
+        <div v-show="ball.show" class="ball">
+          <div class="inner inner-hook"></div>
+        </div>
+      </transition>
+    </div>
   </div>
 </template>
 
 <script>
-  export default {
-    name: 'shopcart',
-    data(){
-      return {}
-    },
-    props: {
-      selectFoods: {
-        type: Array,
-        default() {
-          return [{
-            price: 10,
-            count: 2
-          }]
-        }
-      },
-      deliveryPrice: {
-        type: Number,
-        default: 0
-      },
-      minPrice: {
-        type: Number,
-        default: 0
+export default {
+  name: 'shopcart',
+  data() {
+    return {
+      balls: [{
+        show: false
+      }, {
+        show: false
+      }, {
+        show: false
+      }, {
+        show: false
+      }, {
+        show: false
+      }],
+      dropBalls: []
+    }
+  },
+  props: {
+    selectFoods: {
+      type: Array,
+      default() {
+        return [{
+          price: 10,
+          count: 2
+        }]
       }
     },
-    computed: {
-      totalPrice() {
-        let total = 0
-        this.selectFoods.forEach((food) => {
-          total += food.price * food.count
-        })
-        return total
-      },
-      totalCount() {
-        let count = 0
-        this.selectFoods.forEach((food)=>{
-          count += food.count
-        })
-        return count
-      },
-      payDesc() {
-        if(this.totalPrice === 0){
-          return `\$${this.minPrice}元起送`
-        }else if(this.totalPrice < this.minPrice){
-          let diff = this.minPrice - this.totalPrice
-          return `还差\$${diff}元起送`
-        }else{
-          return '去结算'
+    deliveryPrice: {
+      type: Number,
+      default: 0
+    },
+    minPrice: {
+      type: Number,
+      default: 0
+    }
+  },
+  computed: {
+    totalPrice() {
+      let total = 0
+      this.selectFoods.forEach((food) => {
+        total += food.price * food.count
+      })
+      return total
+    },
+    totalCount() {
+      let count = 0
+      this.selectFoods.forEach((food) => {
+        count += food.count
+      })
+      return count
+    },
+    payDesc() {
+      if (this.totalPrice === 0) {
+        return `\$${this.minPrice}元起送`
+      } else if (this.totalPrice < this.minPrice) {
+        let diff = this.minPrice - this.totalPrice
+        return `还差\$${diff}元起送`
+      } else {
+        return '去结算'
+      }
+    },
+    payClass() {
+      return {
+        'not-enough': this.totalPrice < this.minPrice,
+        'enough': this.totalPrice >= this.minPrice
+      }
+    }
+  },
+  methods: {
+    drop(el) {
+      for (let i = 0; i < this.balls.length; i++) {
+        let ball = this.balls[i];
+        if (!ball.show) {
+          ball.show = true
+          ball.el = el
+          this.dropBalls.push(ball)
+          return
         }
-      },
-      payClass() {
-        return {
-          'not-enough': this.totalPrice<this.minPrice,
-          'enough': this.totalPrice>=this.minPrice
+      }
+    },
+    beforeEnter: function(el) { //这个方法的执行是因为这是一个vue的监听事件
+      let count = this.balls.length;
+      while (count--) {
+        let ball = this.balls[count];
+        if (ball.show) {
+          let rect = ball.el.getBoundingClientRect(); //获取小球的相对于视口的位移(小球高度
+          let x = rect.left - 32;
+          let y = -(window.innerHeight - rect.top - 22);
+          el.style.display = 'none';
+          el.style.webkitTransform = `translate3d(0,${y}px,0)`;
+          el.style.transform = `translate3d(0,${y}px,0)`;
+          let inner = el.querySelector('.inner-hook');
+          inner.style.webkitTransform = `translate3d(${x}px,0,0)`;
+          inner.style.transform = `translate3d(${x}px,0,0)`;
         }
+      }
+    },
+    enter(el,done) {
+      let rf = el.offsetHeight //触发重绘html
+      this.$nextTick(() => {
+        el.style.webkitTransform = 'translate3d(0, 0, 0)'
+        el.style.transform = 'translate3d(0, 0, 0)'
+        let inner = el.querySelector('.inner-hook')
+        inner.style.webkitTransform = 'translate3d(0, 0, 0)'
+        inner.style.transform = 'translate3d(0, 0, 0)'
+        el.addEventListener('transitionend', done) //Vue为了知道过渡的完成，必须设置相应的事件监听器。
+      })
+    },
+    afterEnter(el) {
+      let ball = this.dropBalls.shift()
+      if (ball) {
+        ball.show = false
+        el.style.display = 'none'
       }
     }
   }
+}
 </script>
 
 <style lang="stylus">
@@ -168,4 +236,17 @@
           &.enough
             background: #00b43c
             color: #fff
+    .ball-container
+      .ball
+        position: fixed
+        left: 32px
+        bottom: 22px
+        z-index: 200
+        transition: all .3s cubic-bezier(0.12,-0.79,0.83,0.67);
+        .inner
+          width: 16px
+          height: 16px
+          border-radius: 50%
+          background: rgb(0,160,220)
+          transition: all .3s linear
 </style>
