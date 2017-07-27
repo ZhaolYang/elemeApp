@@ -132,7 +132,10 @@ export default {
 			this.foodsScroll.scrollToElement(el, 300)
 		},
 		_drop(target) {
-			this.$refs.shopcart.drop(target)
+			// 异步执行动画,优化体验
+			this.$nextTick(()=>{
+				this.$refs.shopcart.drop(target)
+			})
 		}
 	},
 	components: {

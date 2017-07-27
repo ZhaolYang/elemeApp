@@ -222,14 +222,14 @@ export default {
 	  	position: fixed
 	  	top: 0
 	  	left: 0
-	  	z-index: 100
+	  	z-index: 200
 	  	width: 100vw
 	  	height: 100%
 	  	overflow: auto
 	  	background: rgba(7,17,27,.8)
 			backdrop-filter: blur(10px)
 			.detail-wrapper
-				min-height: 100vh
+				min-height: 100%
 				width: 100vw
 				.detail-main
 					padding-top: 64px
