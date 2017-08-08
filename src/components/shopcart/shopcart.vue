@@ -39,7 +39,7 @@
                   <span>${{food.price*food.count}}</span>
                 </div>
                 <div class="cartcontrol-wrapper">
-                  <cartcontrol :food="food"></cartcontrol>
+                  <cartcontrol :food="food" @cartAdd="drop"></cartcontrol>
                 </div>
               </li>
             </ul>
@@ -149,6 +149,7 @@ export default {
   },
   methods: {
     drop(el) {
+      console.log('drop done')
       for (let i = 0; i < this.balls.length; i++) {
         let ball = this.balls[i];
         if (!ball.show) {
