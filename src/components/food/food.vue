@@ -31,7 +31,7 @@
         <split></split>
         <div class="rating">
           <h1 class="title">商品评价</h1>
-          <ratingselect :select-type="selectType" :only-content="onlyContent" :desc="desc" :ratings="food.ratings"></ratingselect>
+          <ratingselect @toggleContent="toggleContent" v-on:changeType="changeType" :select-type="selectType" :only-content="onlyContent" :desc="desc" :ratings="food.ratings"></ratingselect>
         </div>
       </div>
     </div>
@@ -97,6 +97,19 @@ export default {
     drop(e) {
       // 这里是小球动画执行逻辑
       this.$emit('cartAdd', event.target)
+    },
+    changeType(type) {
+      if(type === 2){
+        this.selectType = ALL
+      }else if(type === 0){
+        this.selectType = POSITIVE
+      }else {
+        this.selectType = NEGATIVE
+      }
+      
+    },
+    toggleContent() {
+      this.onlyContent = !this.onlyContent
     }
   },
   components: {
