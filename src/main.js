@@ -19,7 +19,7 @@ Vue.config.productionTip = false
 /* eslint-disable no-new */
 
 const routes = [
-	// {path: '/', component: goods},
+	{path: '/', component: goods},
 	{path: '/goods', component: goods},
 	{path: '/ratings', component: ratings},
 	{path: '/seller', component: seller}
@@ -40,4 +40,4 @@ const app = new Vue({
 	}
 }).$mount('#app')
 
-router.replace('/goods')
+// router.replace('/goods')
