@@ -12,7 +12,8 @@
         <router-link to="/seller">商家</router-link>
       </li>
     </ul>
-    <router-view :seller="seller"></router-view>
+    <keep-alive><router-view :seller="seller"></router-view></keep-alive>
+    
   </div>
 </template>
 
