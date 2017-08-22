@@ -116,7 +116,6 @@ export default {
 			if (!event._constructed) {
 				return
 			}
-			console.log(1)
 			this.favorite = !this.favorite
 		},
 		_initScroll() {
